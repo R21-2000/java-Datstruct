@@ -2,7 +2,7 @@ import com.datastruct.*;
 
 public class BST {
     public static void main(String[] args) {
-        // Buat instance dari BinarySearchTree pakai tipe Integer dan String
+        // Buat instance dari BinarySearchTree pakai tipe Integer sama string
         BinarySearchTree<Integer, String> bst = new BinarySearchTree<>();
 
         // Insert Key ke dalam BSTnya

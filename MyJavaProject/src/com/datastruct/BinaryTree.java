@@ -6,110 +6,100 @@ package com.datastruct;
  * 
  */
 
- class BTNode<K,V> {
-    private K key;    //key ada bilangan bulat
-    private V data;   // object data dari sebuah class
-    private BTNode<K,V> llink; //left link
-    private BTNode<K,V> rlink; //right link
+ class BTNode<K, V> { // Definisi class BTNode pakai generik K dan V
+    private K key; // Menyimpan key darnode, biasanya berupa bilangan bulat
+    private V data; // Menyimpan data yang terkait dengan kunci, bisa berupa objek dari kelas lain
+    private BTNode<K, V> llink; // Referensi ke anak kiri dari node
+    private BTNode<K, V> rlink; // Referensi ke anak kanan dari node
 
-    //constructor
+    // Konstruktor buat inisialisasi node pakai key
     public BTNode(K k, V data) {
-        this.key = k; 
-        this.data = data;   
-        this.llink = null;  
-        this.rlink = null;  
+        this.key = k; // key dari node
+        this.data = data; // data dari node
+        this.llink = null; // Inisialisasi leftlink jadi null
+        this.rlink = null; //  Inisialisasi rightlink jadi null
     }
 
+    // Ngatur key node
     public void setKey(K key) {
-        this.key = key;
+        this.key = key; // Ngatur key node pake value baru
     }
+
+    // Method buat dapet key node
     public K getKey() {
-        return key;
+        return key; // Return value key node
     }
+
+    // Ngatur data node
     public void setData(V data) {
-        this.data = data;
+        this.data = data; // Set data node pake value baru
     }
+
+    // Method buat dapet data node
     public V getData() {
-        return data;
+        return data; // Return value dari data node
     }
+
+    // Method buat set leftlink
     public void setLlink(BTNode<K, V> llink) {
-        this.llink = llink;
+        this.llink = llink; // set reference leftlink
     }
+
+    // Method buat get leftlink
     public BTNode<K, V> getLlink() {
-        return llink;
+        return llink; // return reference dari leftlink
     }
+
+    // Method buat set rightlink
     public void setRlink(BTNode<K, V> rlink) {
-        this.rlink = rlink;
+        this.rlink = rlink; // return reference dari rightlink
     }
+
+    // Method buat get rightlink
     public BTNode<K, V> getRlink() {
-        return rlink;
+        return rlink; // return reference dari rightlink
     }
 }
 
-public class BinaryTree<K, V>{
+public class BinaryTree<K, V>{// Definisi class BinaryTree pakai generik K dan V
 
-    //rekursif in order traversal
-    public void printInOrder(BTNode<K,V> node) {
-        //T sebelumnya adalah child node
-        if(node == null) return;
-        else {
-            //ke left node secara rekursif
-            printInOrder(node.getLlink());
-            //cetak key dari node
-            System.out.print(node.getKey() + ":" + node.getData() + " ");
-            //ke right node secara rekursif
-            printInOrder(node.getRlink());
-        }
+    // Method buat cetak elemen di list inorder
+    public void printInOrder(BTNode<K, V> node) { // set node jadi parameter
+        if (node == null) return;    // Kalo node kosong,langsung keluar dari method
+        printInOrder(node.getLlink()); // Rekursif ke leftlink
+        System.out.print(node.getKey() + ":" + node.getData() + " "); // print key dan data
+        printInOrder(node.getRlink()); // Rekursif ke rightlink
     }
 
-    //post order traversal
-    public void printPostOrder(BTNode<K,V> node) {
-        //T sebelumnya adalah child node
-        if(node == null) return;
-        else {
-            //ke left node secara rekursif
-            printPostOrder(node.getLlink());
-            //ke right node secara rekursif
-            printPostOrder(node.getRlink());
-            //cetak key dari node 
-            System.out.print(node.getKey() + ":" + node.getData() + " ");
-        }
-    }  
+    // Method buat cetak elemen di list postorder
+    public void printPostOrder(BTNode<K, V> node) { // set node jadi parameter
+        if (node == null) return; // Kalo node kosong,langsung keluar dari method
+        printPostOrder(node.getLlink()); // Rekursif ke leftlink
+        printPostOrder(node.getRlink()); // Rekursif ke rightlink
+        System.out.print(node.getKey() + ":" + node.getData() + " "); //print key dan data
+    }
 
-    //pre order traversal
-    void printPreOrder(BTNode<K,V> node) {
-        //T sebelumnya adalah child node
-        if(node == null) return;
-        else {
-            //cetak key dari node 
-            System.out.print(node.getKey() + ":" + node.getData() + " ");
-            //ke left node secara rekursif
-            printPreOrder(node.getLlink());
-            //ke right node secara rekursif
-            printPreOrder(node.getRlink());
-        }
-    }  
+    // Method buat cetak elemen di list preorder
+    public void printPreOrder(BTNode<K, V> node) { // set node jadi parameter
+        if (node == null) return; // Kalo node kosong,langsung keluar dari method
+        System.out.print(node.getKey() + ":" + node.getData() + " "); // print key dan data
+        printPreOrder(node.getLlink()); // Rekursif ke leftlink
+        printPreOrder(node.getRlink()); // Rekursif ke rightlink
+    }
     
-    //cetak node di setiap level dari root, left child, 
-    //dan right child secara rekursif 
-    private void printLevelOrderRec(MyLinearList<BTNode<K,V>> q) {
-        if(q.isEmpty()) return;
-        BTNode<K,V> node = q.remove();
-        //cetak key dari node 
-        System.out.print(node.getKey() + ":" + node.getData() + " ");
-        if(node.getLlink() != null) q.pushQ(node.getLlink());
-        if(node.getRlink() != null) q.pushQ(node.getRlink());
-        printLevelOrderRec(q);
+    private void printLevelOrderRec(MyLinearList<BTNode<K, V>> q) { // Set antrian jadi parameter
+        if (q.isEmpty()) return; // Kalo antrian kosong, keluar dari method
+        BTNode<K, V> node = q.remove(); // Ambil node dari antrian
+        System.out.print(node.getKey() + ":" + node.getData() + " "); // Print key dan data
+        if (node.getLlink() != null) q.pushQ(node.getLlink()); // Jika ada leftlink input ke antrian
+        if (node.getRlink() != null) q.pushQ(node.getRlink()); // Jika ada rightlink input ke antrian
+        printLevelOrderRec(q); // Panggil method ini dengan cara rekursif
     }
 
-    //level order traversal
-    public void printLevelOrder(BTNode<K,V> node) {
-        //buat queue untuk menampung node disetiap level
-        MyLinearList<BTNode<K,V>> q = new MyLinearList<BTNode<K,V>>();
-        q.pushQ(node);
-        //memanggil fungsi rekursif untuk mencetak key 
-        //dari node di setiap leve
-        printLevelOrderRec(q);
+    // Method buat print elemen di list level order
+    public void printLevelOrder(BTNode<K, V> node) { // set node jadi parameter
+        MyLinearList<BTNode<K, V>> q = new MyLinearList<>(); // Buat antrian baru
+        if (node != null) q.pushQ(node); // Kalau node terisi,masukkan ke antrian
+        printLevelOrderRec(q); // Panggil metode rekursif buat print level order
     }
 }
-

@@ -1,158 +1,158 @@
 package com.datastruct;
 
-// Kelas BinarySearchTree yang menggunakan generik K dan V
 public class BinarySearchTree<K extends Comparable<? super K>, V> 
                         extends BinaryTree<K, V> 
                         implements Tree<K, V> {
     
-    private BTNode<K, V> root; // Node akar dari BST
+    private BTNode<K, V> root; // Node root dari BST
 
-    // Konstruktor untuk menginisialisasi BST
+    // Konstruktor buat inisialisasi BST
     public BinarySearchTree() {
-        root = null; // Akar diinisialisasi sebagai null
+        root = null; // Root diinisialisasi jadi null
     }
 
-    // Metode untuk menyisipkan kunci dan data ke dalam BST
+    // Method buat menyisipkan key dan data ke BST
     public void insert(K key, V data) {
-        root = insertNode(root, key, data); // Memanggil metode rekursif untuk menyisipkan node
+        root = insertNode(root, key, data); // Panggil method rekursif buat menyisipkan node
     }
 
-    // Metode untuk menghapus kunci dari BST
+    // Method buat hapus key dari BST
     public void delete(K key) {
-        root = deleteNode(root, key); // Memanggil metode rekursif untuk menghapus node
+        root = deleteNode(root, key); // Panggil method rekursif buat hapus node
     }
 
-    // Metode untuk mencari data berdasarkan kunci
+    // Method buat cari data berdasarkan key
     public V search(K key) {
-        V info = null; // Inisialisasi variabel untuk menyimpan data
-        info = getData(find(root, key)); // Mencari node dan mendapatkan data
-        return info; // Mengembalikan data yang ditemukan
+        V info = null; // Inisialisasi variabel buat nyimpen data
+        info = getData(find(root, key)); // Cari node dan dapat datanya
+        return info; // Return data yang udah ketemu
     }
 
-    // Metode untuk menemukan node dengan kunci maksimum
+    // Method buat menemukan node pake key maksimum
     public K max() {
-        K kunci = null; // Inisialisasi variabel untuk menyimpan kunci maksimum
-        kunci = getKey(findMax(root)); // Mencari kunci maksimum
-        return kunci; // Mengembalikan kunci maksimum
+        K kunci = null; // Inisialisasi variabel buat nyimpen key maksimum
+        kunci = getKey(findMax(root)); // Cari key maksimum
+        return kunci; // Return key maksimum
     }
     
-    // Metode untuk menemukan node dengan kunci minimum
+    // Method buat menemukan node pake kunci minimum
     public K min() {
-        K kunci = null; // Inisialisasi variabel untuk menyimpan kunci minimum
-        kunci = getKey(findMin(root)); // Mencari kunci minimum
-        return kunci; // Mengembalikan kunci minimum
+        K kunci = null; // Inisialisasi variabel buat nyimpen key minimum
+        kunci = getKey(findMin(root)); // Cari key minimum
+        return kunci; // Return key minimum
     }
 
-    // Metode untuk melakukan traversal inorder
+    // Method buat eksekusi traversal inorder
     public void inOrder() {
-        printInOrder(root); // Memanggil metode untuk mencetak traversal inorder
+        printInOrder(root); // Panggil method buat cetak traversal inorder
     }
 
-    // Metode untuk melakukan traversal preorder
+    // Method buat eksekusi traversal preorder
     public void preOrder() {
-        printPreOrder(root); // Memanggil metode untuk mencetak traversal preorder
+        printPreOrder(root); // Panggil method buat cetak traversal preorder
     }
 
-    // Metode untuk melakukan traversal postorder
+    // Method buat eksekusi traversal postorder
     public void postOrder() {
-        printPostOrder(root); // Memanggil metode untuk mencetak traversal postorder
+        printPostOrder(root); // Panggil Method buat cetak traversal postorder
     }
 
-    // Metode untuk melakukan traversal level-order
+    // Method buat eksekusi traversal level-order
     public void levelOrder() {
-        printLevelOrder(root); // Memanggil metode untuk mencetak traversal level-order
+        printLevelOrder(root); // Panggil Method buat cetak traversal level-order
     }
     
-    // Metode untuk mendapatkan kunci dari node
+    // Method buat dapatin key dari node
     public K getKey(BTNode<K, V> node) {
-        return node.getKey(); // Mengembalikan kunci dari node
+        return node.getKey(); // return key dari node
     }
 
-    // Metode untuk mendapatkan data dari node
+    // Method buat dapetin data dari node
     public V getData(BTNode<K, V> node) {
-        return node.getData(); // Mengembalikan data dari node
+        return node.getData(); // return data dari node
     }
 
-    // Metode untuk menyisipkan node secara rekursif
+    // Method buat menyisipkan node secara rekursif
     private BTNode<K, V> insertNode(BTNode<K, V> node, K k, V data) {
         if (node == null) {
-            // Jika node kosong, buat node baru
+            // Kalo node kosong, buat node baru
             BTNode<K, V> newNode = new BTNode<K, V>(k, data);
-            return newNode; // Kembalikan node baru
+            return newNode; // Return node barunya
         }
-        // Jika kunci baru lebih kecil, masukkan ke subtree kiri
+        // Kalo key baru kebih kecil, masukkin ke subtree sebelah kiri
         else if (k.compareTo(node.getKey()) < 0) {
             node.setLlink(insertNode(node.getLlink(), k, data));
-            return node; // Kembalikan node yang telah diperbarui
+            return node; // Return node yang udah diperbarui
         }
-        // Jika kunci baru lebih besar atau sama, masukkan ke subtree kanan
+        // Kalo key baru lebih besar atau sama, masukkin ke subtree kanan
         else {
             node.setRlink(insertNode(node.getRlink(), k, data));
-            return node; // Kembalikan node yang telah diperbarui
+            return node; // return node yang udah diperbarui
         }
     }
 
-    // Metode untuk menghapus node secara rekursif
+    // Method buat hapus node secara rekursif
     private BTNode<K, V> deleteNode(BTNode<K, V> node, K k) {
-        if (node == null) return node; // Jika node kosong, kembalikan null
-        // Jika kunci yang dicari lebih besar, telusuri ke kanan
+        if (node == null) return node; // Kalo node kosong, return null
+        // Kalo key yang dicari lebih besar, cek ke kanan
         else if (node.getKey().compareTo(k) < 0) {
             node.setRlink(deleteNode(node.getRlink(), k));
-            return node; // Kembalikan node yang telah diperbarui
+            return node; // Return node yang udah diperbarui
         }
-        // Jika kunci yang dicari lebih kecil, telusuri ke kiri
+        // Kalo key yang dicari lebih kecil, cek ke kiri
         else if (node.getKey().compareTo(k) > 0) {
             node.setLlink(deleteNode(node.getLlink(), k));
-            return node; // Kembalikan node yang telah diperbarui
+            return node; // Return node yang udah diperbarui
         }
-        // Node yang akan dihapus ditemukan
-        // Jika tidak memiliki anak di kanan
+        // Nemu node yang mau diapus
+        // Kalo gak punya child node di kanan
         if (node.getLlink() == null) {
             BTNode<K, V> temp = node.getRlink();
-            return temp; // Kembalikan anak kanan
+            return temp; // Return right child node
         }
-        // Jika tidak memiliki anak di kiri
+        // Kalo gak punya child node di kiri
         else if (node.getRlink() == null) {
             BTNode<K, V> temp = node.getLlink();
-            return temp; // Kembalikan anak kiri
+            return temp; // Return left child node
         }
-        // Jika memiliki kedua anak
+        // Kalo punya right dan left child node
         else {
-            // Cari node dengan kunci terbesar dari subtree kiri
+            // Cari node yang punya key terbesar dari subtree kiri
             BTNode<K, V> parent = node; 
             BTNode<K, V> child = node.getLlink();
             while (child.getRlink() != null) {
                 parent = child;
                 child = child.getRlink();
             }
-            // Jika ditemukan node dengan kunci terbesar dari subtree kiri
+            // Kalo nemu node yang keynya paling besar dari subtree kiri
             if (parent != node) parent.setRlink(child.getLlink());
+            // Kalo gak nemu node yang keynya paling besar dari subtree kiri
             else parent.setLlink(child.getLlink());
 
-            // Salin data dari node dengan kunci terbesar ke node yang akan dihapus
+            // copy data dari node yang keynya terbesar node yang mau dihapus
             node.setKey(child.getKey());
             node.setData(child.getData());
 
-            return node; // Kembalikan node yang telah diperbarui
+            return node; // Return node yang udah diperbarui disini
         }
     }
 
-    // Metode untuk mencari node berdasarkan kunci
+    // Method buat cari node based on key
     private BTNode<K, V> find(BTNode<K, V> node, K k) {
-        if (node == null || node.getKey() == k) return node; // Jika node kosong atau kunci ditemukan
-        else if (node.getKey().compareTo(k) < 0) return find(node.getRlink(), k); // Telusuri ke kanan
-        else return find(node.getLlink(), k); // Telusuri ke kiri
+        if (node == null || node.getKey() == k) return node; // Kalo nodenya kosong atau keynya ketemu
+        else if (node.getKey().compareTo(k) < 0) return find(node.getRlink(), k); // Cek ke kanan
+        else return find(node.getLlink(), k); // Cek ke kiri
     }
 
-    // Metode untuk menemukan node dengan kunci minimum
+    // Metode buat nemuin node yang punya key minimum
     private BTNode<K, V> findMin(BTNode<K, V> node) {
-        if (node == null || node.getLlink() == null) return node; // Jika node kosong atau tidak ada anak kiri
-        else return findMin(node.getLlink()); // Telusuri ke anak kiri
+        if (node == null || node.getLlink() == null) return node; // Kalo node kosong atau gaada left child node
+        else return findMin(node.getLlink()); // cek ke kiri
     }
 
-    // Metode untuk menemukan node dengan kunci maksimum
+    // Method buat nemuin node yang punya key maksimum
     private BTNode<K, V> findMax(BTNode<K, V> node) {
-        if (node == null || node.getRlink() == null) return node; // Jika node kosong atau tidak ada anak kanan
-        else return findMax(node.getRlink()); // Telusuri ke anak kanan
+        if (node == null || node.getRlink() == null) return node; // Kalo node kosong atau gaada right child node
+        else return findMax(node.getRlink()); // cek kek kanan
     }
 }
