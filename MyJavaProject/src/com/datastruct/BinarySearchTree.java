@@ -153,6 +153,6 @@ public class BinarySearchTree<K extends Comparable<? super K>, V>
     // Method buat nemuin node yang punya key maksimum
     private BTNode<K, V> findMax(BTNode<K, V> node) {
         if (node == null || node.getRlink() == null) return node; // Kalo node kosong atau gaada right child node
-        else return findMax(node.getRlink()); // cek kek kanan
+        else return findMax(node.getRlink()); // cek kek kananya
     }
 }
