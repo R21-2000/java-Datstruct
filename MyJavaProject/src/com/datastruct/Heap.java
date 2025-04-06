@@ -113,11 +113,22 @@ public class Heap <K extends Comparable<? super K>,V>{
             return null; // Mengembalikan null jika heap kosong
         }
         BTNode<K, V> root = arrList.get(0); // Mendapatkan elemen pertama (root heap)
-        BTNode<K, V> lastNode = arrList.remove(arrList.size() - 1); // Menghapus elemen terakhir
-        if (arrList.size() > 0) {
-            arrList.set(0, lastNode); // Mengganti root dengan elemen terakhir
-            heapifyMin(0); // Memulihkan sifat heap
+        // BTNode<K, V> lastNode = arrList.remove(arrList.size() - 1); // Menghapus elemen terakhir
+        // if (arrList.size() > 0) {
+        //     arrList.set(0, lastNode); // Mengganti root dengan elemen terakhir
+        //     heapifyMin(0); // Memulihkan sifat heap
+        // }
+        BTNode<K, V> lastNode = arrList.get(arrList.size() - 1); // Ambil elemen terakhir
+    arrList.remove(arrList.size() - 1); // Hapus elemen terakhir
+
+    if (arrList.size() > 0) {
+        arrList.set(0, lastNode); // Ganti root dengan elemen terakhir
+        if (priority) {
+            heapifyMin(0, arrList.size()); // <- PERBAIKAN DI SINI
+        } else {
+            heapifyMax(arrList.size(), 0);
         }
+    }
         return root; // Mengembalikan elemen pertama yang dihapus
     }
 
