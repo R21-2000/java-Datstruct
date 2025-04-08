@@ -74,7 +74,7 @@ public class Heap <K extends Comparable<? super K>,V>{
         buildHeap();
         for(int i = size - 1;i >= 0; i--)
         {
-
+            // harusnya ada isinya
         }
     }
     
