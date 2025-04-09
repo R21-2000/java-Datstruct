@@ -1,138 +1,173 @@
 package com.datastruct;
+/*
+ * Generic Heap (max and min)
+ * author: Lely Hiryanto
+ */
 
-public class Heap <K extends Comparable<? super K>,V>{
-    private MyArrayList<BTNode<K,V>>arrList;
-    private Boolean priority;
+public class Heap<K extends Comparable<? super K>,V> {
+    //Attributes
+    private MyArrayList<BTNode<K,V>> arrList;
+    private boolean priority;
 
-    public Heap(int capacity, boolean priority){
+    //membuat array list dan mengeset apakah heap biasa (heap max)
+    //atau heap dengan priority (heap min)
+    public Heap(int capacity, boolean priority) {
         arrList = new MyArrayList<BTNode<K,V>>(capacity);
         this.priority = priority;
     }
-    public int size(){
+
+    //mengembalikan jumlah elemen di heap
+    public int size() {
         return arrList.size();
     }
-    
-    public V getData(int index){
+    //mengembalikan bagian value (data/informasi) 
+    //dari node berdasarkan index
+    public V getData(int index) {
         return arrList.get(index).getData();
     }
-    
-    public V getData(BTNode<K,V>node){
+    //mengembalikan bagian value (data/informasi) 
+    //dari node berdasarkan value yang diberikan
+    public V getData(BTNode<K,V> node) {
         return node.getData();
     }
-
-    public K getKey(int index){
+    //mengembalikan bagian key dari node 
+    //berdasarkan index
+    public K getKey(int index) {
         return arrList.get(index).getKey();
     }
-
-    public K getKey(BTNode<K,V>node){
+    //mengembalikan bagian key dari node 
+    //berdasarkan value yang diberikan
+    public K getKey(BTNode<K,V> node) {
         return node.getKey();
     }
-
-    public void add(K key, V data){
-        arrList.add(new BTNode<K,V>(key,data));
+    //menambahkan node <key,value> ke heap
+    //tanpa heapify
+    public void add(K key, V data) {
+        arrList.add(new BTNode<K,V>(key, data));
     }
-
-    public void insert(K key, V data){
-        arrList.add(new BTNode<K,V>(key,data));
+    //menyisipan node <key,value> ke heap
+    //dengan heapify (max atau min)
+    public void insert(K key, V data) {
+        arrList.add(new BTNode<K,V>(key, data));
         int size = arrList.size();
-        for(int i = size / 2 - 1; i>=0; i =(i+1)/2-1){
+        for (int i = size / 2 - 1; i >= 0; i = (i+1)/2 - 1) {
             if(priority) heapifyMin(size, i);
             else heapifyMax(size, i);
         }
     }
-
-    public void buildHeap(){
+    //membuat heap
+    public void buildHeap() {
         int size = arrList.size();
-        for(int i = size / 2 - 1; i>=0;i--){
-            if(priority)heapifyMin(size,i);
-            else heapifyMax(size,i);
+
+        // build heapSort (rearrange array)
+        for (int i = size / 2 - 1; i >= 0; i--) {
+            if(priority) heapifyMin(size, i);
+            else heapifyMax(size, i);
         }
     }
-    void heapifyMax(int size,int i)
-    {
-        int parent = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        
-        if(left < size && arrList.get(left).getKey().compareTo(arrList.get(parent).getKey())>0)
-                parent = left;
-        
-        if(right < size && arrList.get(right).getKey().compareTo(arrList.get(parent).getKey())>0)
-                parent = right;
-        
-        if(parent !=i)
+    //heapsort
+    public void sort() {
+        int size = arrList.size();
+
+        // build heapSort (rearrange array)
+        buildHeap();
+
+        // one by one extract an element from heapSort
+        for (int i = size - 1; i >= 0; i--)
         {
+            // swap current root node to rightmost leaf node
+            BTNode<K,V> temp = arrList.get(0);
+            arrList.set(0, arrList.get(i));
+            arrList.set (i, temp);
+
+            // call max or min heapify on the reduced heap
+            if(priority) heapifyMin(i, 0);
+            else heapifyMax(i, 0);
+        }
+    }
+    // to max heapify a subtree rooted at node i
+    void heapifyMax(int size, int i)
+    {
+        int parent   = i; // initialize parent node
+        int left  = 2 * i + 1; // initialize left child node
+        int right = 2 * i + 2; // initialize right child node
+
+        // if left child is larger than parent
+        if (left < size && arrList.get(left).getKey().compareTo(arrList.get(parent).getKey()) > 0)
+            parent = left;
+
+        // if right child is larger than parent
+        if (right < size && arrList.get(right).getKey().compareTo(arrList.get(parent).getKey()) > 0)
+            parent = right;
+
+        // if parent is not root
+        if (parent != i)
+        {
+            // swap
             BTNode<K,V> temp = arrList.get(i);
             arrList.set(i, arrList.get(parent));
-            arrList.set(parent,temp);
+            arrList.set(parent, temp);
 
-            heapifyMax(size,parent);
+            // recursively heapify the affected sub-tree
+            heapifyMax(size, parent);
         }
     }
-    public void sort(){
-        int size = arrList.size();
-        buildHeap();
-        for(int i = size - 1;i >= 0; i--)
+    // to min heapify a subtree rooted at node i
+    void heapifyMin(int size, int i)
+    {
+        int parent   = i; // initialize max as root
+        int left  = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        // if left child is smaller than root
+        if (left < size && arrList.get(left).getKey().compareTo(arrList.get(parent).getKey()) <= 0)
+            parent = left;
+
+        // if right child is smaller than root
+        if (right < size && arrList.get(right).getKey().compareTo(arrList.get(parent).getKey()) <= 0)
+            parent = right;
+
+        // if parent is not root
+        if (parent != i)
         {
-            // harusnya ada isinya
-        }
-    }
-    
-    private void heapifyMin(int index, int size) {
-        int smallest = index; // Inisialisasi smallest sebagai index
-        int leftChild = 2 * index + 1; // Indeks anak kiri
-        int rightChild = 2 * index + 2; // Indeks anak kanan
-    
-        // Cek apakah anak kiri lebih kecil dari node saat ini
-        if (leftChild < size && arrList.get(leftChild).getKey().compareTo(arrList.get(smallest).getKey()) < 0) {
-            smallest = leftChild;
-        }
-    
-        // Cek apakah anak kanan lebih kecil dari node saat ini
-        if (rightChild < size && arrList.get(rightChild).getKey().compareTo(arrList.get(smallest).getKey()) < 0) {
-            smallest = rightChild;
-        }
-    
-        // Jika smallest bukan index awal, tukar dan panggil heapifyMin secara rekursif
-        if (smallest != index) {
-            BTNode<K, V> temp = arrList.get(index);
-            arrList.set(index, arrList.get(smallest));
-            arrList.set(smallest, temp);
-            heapifyMin(smallest, size);
-        }
-    }
-    public BTNode<K, V> first() {
-        if (arrList.isEmpty()) {
-            return null; // Mengembalikan null jika heap kosong
-        }
-        return arrList.get(0); // Mengembalikan elemen pertama (root heap)
-    }
-    
-    public BTNode<K, V> removeFirst() {
-        if (arrList.isEmpty()) {
-            return null; // Mengembalikan null jika heap kosong
-        }
-        BTNode<K, V> root = arrList.get(0); // Mendapatkan elemen pertama (root heap)
-        // BTNode<K, V> lastNode = arrList.remove(arrList.size() - 1); // Menghapus elemen terakhir
-        // if (arrList.size() > 0) {
-        //     arrList.set(0, lastNode); // Mengganti root dengan elemen terakhir
-        //     heapifyMin(0); // Memulihkan sifat heap
-        // }
-        BTNode<K, V> lastNode = arrList.get(arrList.size() - 1); // Ambil elemen terakhir
-    arrList.remove(arrList.size() - 1); // Hapus elemen terakhir
+            // swap
+            BTNode<K,V> temp = arrList.get(i);
+            arrList.set(i, arrList.get(parent));
+            arrList.set(parent, temp);
 
-    if (arrList.size() > 0) {
-        arrList.set(0, lastNode); // Ganti root dengan elemen terakhir
-        if (priority) {
-            heapifyMin(0, arrList.size()); // <- PERBAIKAN DI SINI
-        } else {
-            heapifyMax(arrList.size(), 0);
+            // recursively heapify the affected sub-tree
+            heapifyMin(size, parent);
         }
     }
-        return root; // Mengembalikan elemen pertama yang dihapus
+    //mengembalikan root node (tidak menghapus)
+    public BTNode<K,V> first() {
+        return arrList.get(0);
+    }
+    //mengembalikan root node dan menghapusnya dari heap
+    public BTNode<K,V> removeFirst() {
+        
+        int n = arrList.size() - 1;
+
+        // move current root to end
+        BTNode<K,V> temp = arrList.get(0);
+        arrList.set(0, arrList.get(n));
+        arrList.set (n, temp);
+
+        // call max or min heapify on the reduced heapSort
+        if(priority) heapifyMin(n, 0);
+        else heapifyMax(n, 0);
+
+        //delete min dan kurangi ukuran heap
+        arrList.remove(n);
+
+        return temp;
     }
 
-    public void display(){
-        arrList.cetakList();
+    /* A utility function to print array of size n */
+    public void display()
+    {
+        int n = arrList.size();
+        for(int i = 0; i < n; i++)
+            System.out.println(arrList.get(i).getData());
     }
 }
