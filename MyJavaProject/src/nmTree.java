@@ -1,6 +1,3 @@
-/*
- * Modified and Generic version of: http://www.java2s.com/ref/java/java-data-structures-234-tree.html
- */
 class DataItem<K, V> {
    private K key;
    private V data;
