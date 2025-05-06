@@ -1,9 +1,4 @@
 package com.datastruct;
-/* 
- * Struktur data Graph dengan bobot pada setiap edge
- * sources: https://www.lavivienpost.net/weighted-graph-as-adjacency-list/  
- * 
- */
 
 import java.util.*;
 
@@ -37,35 +32,29 @@ class Edge<T> {
 }
 
 public class Graph<T> { 
-    //Map<T, LinkedList<Edge<T>>> adj;
 	private Map<T, MyLinearList<Edge<T>>> adj;
-	boolean directed;
+	private boolean directed;
 	
-	//Constructor, Time O(1) Space O(1)
 	public Graph (boolean type) { 
         adj = new HashMap<>();
-		directed = type; // false: undirected, true: directed
+		directed = type; 
 	}
 
-    //Nambah edges sama nambah nodes, Time O(1) Space O(1)
 	public void addEdge(T a, T b, int w) {
-		adj.putIfAbsent(a, new MyLinearList<>()); //add node
-		adj.putIfAbsent(b, new MyLinearList<>()); //add node
-		Edge<T> edge1 = new Edge<>(b, w);
-		adj.get(a).pushQ(edge1);//add(edge1); //add edge
-		if (!directed) { //undirected
-			Edge<T> edge2 = new Edge<>(a, w);
-			adj.get(b).pushQ(edge2);
+		adj.putIfAbsent(a, new MyLinearList<>()); //tambah node
+		adj.putIfAbsent(b, new MyLinearList<>()); 
+		adj.get(a).pushQ(new Edge<>(b, w)); //tambah edge
+		if (!directed) { 
+			adj.get(b).pushQ(new Edge<>(b, w));
 		}			
 	}
 
     //Print graph as hashmap, Time O(V+E), Space O(1)
 	public void printGraph() {
 		for (T key: adj.keySet()) {
-			//System.out.println(key.toString() + " : " + adj.get(key).toString());
-            System.out.print(key.toString() + " : ");
-			MyLinearList<Edge<T>> thelist = adj.get(key);
-			Node<Edge<T>> curr = thelist.head;
+            System.out.print(key + " : ");
+			MyLinearList<Edge<T>> edges = adj.get(key);
+			Node<Edge<T>> curr = edges.head;
 			while(curr != null) {
 				System.out.print(curr.getData());
 				curr = curr.getNext();
@@ -76,49 +65,50 @@ public class Graph<T> {
 
 	public void deleteEdge(T a, T b) {
 		// Hapus edge dari a ke b
-		if (adj.containsKey(a)) {
-			MyLinearList<Edge<T>> edges = adj.get(a);
-			Node<Edge<T>> curr = edges.head;
-			Node<Edge<T>> prev = null;
+		 // Check if both nodes exist in the graph
+		 if (!adj.containsKey(a) || !adj.containsKey(b)) {
+			return;
+		}
 	
-			while (curr != null) {
-				if (curr.getData().getNeighbor().equals(b)) {
-					if (prev == null) {
-						// Hapus head
-						edges.head = curr.getNext();
-						if (edges.head == null) edges.tail = null;
+		// Remove edge from a to b
+		MyLinearList<Edge<T>> edgesA = adj.get(a);
+		Node<Edge<T>> currA = edgesA.head;
+		Node<Edge<T>> prevA = null;
+		
+		while (currA != null) {
+			if (currA.getData().getNeighbor().equals(b)) {
+				if (prevA == null) {
+					edgesA.head = currA.getNext();
+					if (edgesA.head == null) edgesA.tail = null;
+				} else {
+					prevA.setNext(currA.getNext());
+					if (currA.getNext() == null) edgesA.tail = prevA;
+				}
+				break;
+			}
+			prevA = currA;
+			currA = currA.getNext();
+		}
+	
+		// If undirected, also remove edge from b to a
+		if (!directed) {
+			MyLinearList<Edge<T>> edgesB = adj.get(b);
+			Node<Edge<T>> currB = edgesB.head;
+			Node<Edge<T>> prevB = null;
+			
+			while (currB != null) {
+				if (currB.getData().getNeighbor().equals(a)) {
+					if (prevB == null) {
+						edgesB.head = currB.getNext();
+						if (edgesB.head == null) edgesB.tail = null;
 					} else {
-						prev.setNext(curr.getNext());
-						if (curr.getNext() == null) edges.tail = prev;
+						prevB.setNext(currB.getNext());
+						if (currB.getNext() == null) edgesB.tail = prevB;
 					}
 					break;
 				}
-				prev = curr;
-				curr = curr.getNext();
-			}
-		}
-	
-		// Jika graph tidak directed, hapus edge dari b ke a juga
-		if (!directed) {
-			if (adj.containsKey(b)) {
-				MyLinearList<Edge<T>> edges = adj.get(b);
-				Node<Edge<T>> curr = edges.head;
-				Node<Edge<T>> prev = null;
-	
-				while (curr != null) {
-					if (curr.getData().getNeighbor().equals(a)) {
-						if (prev == null) {
-							edges.head = curr.getNext();
-							if (edges.head == null) edges.tail = null;
-						} else {
-							prev.setNext(curr.getNext());
-							if (curr.getNext() == null) edges.tail = prev;
-						}
-						break;
-					}
-					prev = curr;
-					curr = curr.getNext();
-				}
+				prevB = currB;
+				currB = currB.getNext();
 			}
 		}
 	}
@@ -139,20 +129,12 @@ public class Graph<T> {
 		
 					MyLinearList<Edge<T>> neighbors = adj.get(current);
 					if (neighbors != null) {
-						// Neihbors ini kita push ke stack
-						// biar bisa di pop lagi
-						// terus di print
 						List<T> neighborList = new ArrayList<>();
 						Node<Edge<T>> currNode = neighbors.head;
 						while (currNode != null) {
 							neighborList.add(currNode.getData().getNeighbor());
 							currNode = currNode.getNext();
 						}
-						//nah kalo ini kita reverse
-						// biar urutannya sesuai sama yang kita mau
-						// soalnya stack itu LIFO
-						// jadi kalo kita push ke stack
-						// terus kita pop, yang terakhir di push
 						Collections.reverse(neighborList);
 						for (T neighbor : neighborList) {
 							if (!visited.contains(neighbor)) {
@@ -161,8 +143,8 @@ public class Graph<T> {
 						}
 					}
 				}
-			}
-			System.out.println();		
+			System.out.println();
+		}		
 	}
 
 	//BFS
@@ -177,7 +159,7 @@ public class Graph<T> {
 			while (!queue.isEmpty()) {
 				T current = queue.poll();
 				System.out.print(current + " ");
-				//kalo fungsi ini itu buat nambahin node ke queue
+
 				MyLinearList<Edge<T>> neighbors = adj.get(current);
 				if (neighbors != null) {
 					Node<Edge<T>> currNode = neighbors.head;
@@ -192,6 +174,5 @@ public class Graph<T> {
 				}
 			System.out.println();
 		}
-		
 	}
 }

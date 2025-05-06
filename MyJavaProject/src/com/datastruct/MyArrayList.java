@@ -80,7 +80,6 @@ public class MyArrayList <T> {
     }
 
     public T get(int i) {
-        @SuppressWarnings("unchecked")
         final T e = (T) thelist[i];
         return e;
     }

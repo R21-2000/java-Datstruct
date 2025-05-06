@@ -26,11 +26,13 @@ public class GraphMain {
         MyVertex v5 = new MyVertex("r");
 
         Graph<MyVertex> WG = new Graph<MyVertex>(false); //undirected
-        WG.addEdge(v1, v2, 2);
-        WG.addEdge(v1, v3, 7);
+        WG.addEdge(v4, v2, 2);
+        WG.addEdge(v5, v3, 7);
         WG.addEdge(v2, v3, 9);
-        WG.addEdge(v2, v4, 8);
+        WG.addEdge(v1, v4, 8);
         WG.addEdge(v4, v5, 6);
+
+        
         System.out.println("Graph yang undirected:");
         WG.printGraph();
 
@@ -44,7 +46,7 @@ public class GraphMain {
 
         //Manggil fungsi deleteEdge buat apus edge antar 2 vekter
         System.out.println("\nDelete edges dari v1 ke v2 dan v1 ke v3:");
-        WG.deleteEdge(v1, v2);
+        WG.deleteEdge(v3, v2);
         WG.deleteEdge(v1, v3);
 
         //Nampilin Graph abis pake fungsi deleteEdge
