@@ -18,47 +18,36 @@ class MyVertex{
 
 public class GraphMain {
     public static void main(String[] args) {
-        //create vertex
-        MyVertex v1 = new MyVertex("p");
-        MyVertex v2 = new MyVertex("k");
-        MyVertex v3 = new MyVertex("z");
-        MyVertex v4 = new MyVertex("u");
-        MyVertex v5 = new MyVertex("r");
+        // Buat simpul sesuai gambar (V0 - V6)
+        MyVertex v0 = new MyVertex("V0");
+        MyVertex v1 = new MyVertex("V1");
+        MyVertex v2 = new MyVertex("V2");
+        MyVertex v3 = new MyVertex("V3");
+        MyVertex v4 = new MyVertex("V4");
+        MyVertex v5 = new MyVertex("V5");
+        MyVertex v6 = new MyVertex("V6");
 
-        Graph<MyVertex> WG = new Graph<MyVertex>(false); //undirected
-        WG.addEdge(v4, v2, 2);
-        WG.addEdge(v5, v3, 7);
-        WG.addEdge(v2, v3, 9);
-        WG.addEdge(v1, v4, 8);
-        WG.addEdge(v4, v5, 6);
+        // Graph directed sesuai soal
+        Graph<MyVertex> G = new Graph<>(true); // directed = true
 
-        
-        System.out.println("Graph yang undirected:");
-        WG.printGraph();
+        // Tambahkan edge sesuai gambar
+        G.addEdge(v2, v0, 1);
+        G.addEdge(v2, v3, 1);
+        G.addEdge(v0, v1, 1);
+        G.addEdge(v0, v3, 1);
+        G.addEdge(v1, v4, 1);
+        G.addEdge(v3, v1, 1);
+        G.addEdge(v3, v4, 1);
+        G.addEdge(v3, v5, 1);
+        G.addEdge(v4, v6, 1);
+        G.addEdge(v5, v6, 1);
 
-        //ini manggil dan make fungsi DFS
-        System.out.println("\nDFS traversal dari vertex p:");
-        WG.DFS(v1);
+        // Cetak graph
+        System.out.println("Graph:");
+        G.printGraph();
 
-        //kalo ini manggil dan make fungsi BFS
-        System.out.println("\nBFS traversal dari vertex p:");
-        WG.BFS(v1);
-
-        //Manggil fungsi deleteEdge buat apus edge antar 2 vekter
-        System.out.println("\nDelete edges dari v1 ke v2 dan v1 ke v3:");
-        WG.deleteEdge(v3, v2);
-        WG.deleteEdge(v1, v3);
-
-        //Nampilin Graph abis pake fungsi deleteEdge
-        System.out.println("Graph setelah dihapus:");
-        WG.printGraph();
-        
-        //Cek Edge yang udah di deleteEdge pake DFS
-        System.out.println("\nDFS traversal dari vertex p setelah delete:");
-        WG.DFS(v1);
-
-        //Cek Edge yang udah di deleteEdge pake BFS
-        System.out.println("\nBFS traversal dari vertex p setelah delete:");
-        WG.BFS(v1);
+        // Hitung shortest path dari V2 ke V6
+        int distance = G.shortestPath(v2, v6);
+        System.out.println("Jarak terpendek dari V2 ke V6 adalah: " + distance);
     }
 }

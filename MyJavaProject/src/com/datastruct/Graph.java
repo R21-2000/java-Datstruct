@@ -175,4 +175,51 @@ public class Graph<T> {
 			System.out.println();
 		}
 	}
+
+public int shortestPath(T src, T dest) {
+    // Nyimpen queue ke setiap vertex
+    Map<T, Integer> distance = new HashMap<>();
+
+    // Queue
+    Queue<T> queue = new LinkedList<>();
+
+    // Mulai semua vertex dan edgenya itu tak hingga (belum pernah dikunjungi)
+    for (T key : adj.keySet()) {
+        distance.put(key, Integer.MAX_VALUE);
+    }
+
+    // Masukkan vertex asal kequeuenya terus set edgenya ke 0
+    queue.offer(src);
+    distance.put(src, 0);
+
+    while (!queue.isEmpty()) {
+        T current = queue.poll(); // Ambil vertex dari queue
+        int currentDist = distance.get(current); // Ambil jarak dari vertex tersebut
+
+        // Ambil semua tetangga dari simpul saat ini
+        MyLinearList<Edge<T>> neighbors = adj.get(current);
+        if (neighbors != null) {
+            Node<Edge<T>> currNode = neighbors.head;
+
+            // Loop ke semua neighbour
+            while (currNode != null) {
+                T neighbor = currNode.getData().getNeighbor();
+                
+				// Kalo neighbour belom dikunjungin
+                if (distance.get(neighbor) == Integer.MAX_VALUE) {
+                    
+					// Update edge terus tambahin ke queue
+                    distance.put(neighbor, currentDist + 1);
+                    queue.offer(neighbor);
+                }
+
+                // Lanjut keneighbour berikutnya
+                currNode = currNode.getNext();
+            }
+        }
+    }
+
+    // Kembalikan edge dari src ke dest
+    return distance.get(dest);
+}
 }
