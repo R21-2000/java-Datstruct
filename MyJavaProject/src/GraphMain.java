@@ -22,6 +22,5 @@ public class GraphMain {
 
         g.primMST("V1");
         System.out.println();
-        g.kruskalMST();
     }
 }
