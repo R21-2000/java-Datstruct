@@ -2,224 +2,145 @@ package com.datastruct;
 
 import java.util.*;
 
-class Edge<T> { 
-	private T neighbor; //connected vertex
-	private int weight; //isi dari edge
-	
-	public Edge(T v, int w) {
-		this.neighbor = v; 
-		this.weight = w;
-	}
+public class Graph<T> {
+    private final boolean isDirected;
+    private final List<Vertex> vertices = new ArrayList<>();
 
-	public void setNeighbor(T neighbor) {
-		this.neighbor = neighbor;
-	}
-	public T getNeighbor() {
-		return neighbor;
-	}
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-	public int getWeight() {
-		return weight;
-	}
-	
-	//Time O(1) Space O(1)
-	@Override
-	public String toString() {
-		return "(" + neighbor + "," + weight + ")";
-	}
-}
-
-public class Graph<T> { 
-	private Map<T, MyLinearList<Edge<T>>> adj;
-	private boolean directed;
-	
-	public Graph (boolean type) { 
-        adj = new HashMap<>();
-		directed = type; 
-	}
-
-	public void addEdge(T a, T b, int w) {
-		adj.putIfAbsent(a, new MyLinearList<>()); //tambah node
-		adj.putIfAbsent(b, new MyLinearList<>()); 
-		adj.get(a).pushQ(new Edge<>(b, w)); //tambah edge
-		if (!directed) { 
-			adj.get(b).pushQ(new Edge<>(b, w));
-		}			
-	}
-
-    //Print graph as hashmap, Time O(V+E), Space O(1)
-	public void printGraph() {
-		for (T key: adj.keySet()) {
-            System.out.print(key + " : ");
-			MyLinearList<Edge<T>> edges = adj.get(key);
-			Node<Edge<T>> curr = edges.head;
-			while(curr != null) {
-				System.out.print(curr.getData());
-				curr = curr.getNext();
-			}
-			System.out.println();
-		}
-	}
-
-	public void deleteEdge(T a, T b) {
-		// Hapus edge dari a ke b
-		 // Check if both nodes exist in the graph
-		 if (!adj.containsKey(a) || !adj.containsKey(b)) {
-			return;
-		}
-	
-		// Remove edge from a to b
-		MyLinearList<Edge<T>> edgesA = adj.get(a);
-		Node<Edge<T>> currA = edgesA.head;
-		Node<Edge<T>> prevA = null;
-		
-		while (currA != null) {
-			if (currA.getData().getNeighbor().equals(b)) {
-				if (prevA == null) {
-					edgesA.head = currA.getNext();
-					if (edgesA.head == null) edgesA.tail = null;
-				} else {
-					prevA.setNext(currA.getNext());
-					if (currA.getNext() == null) edgesA.tail = prevA;
-				}
-				break;
-			}
-			prevA = currA;
-			currA = currA.getNext();
-		}
-	
-		// If undirected, also remove edge from b to a
-		if (!directed) {
-			MyLinearList<Edge<T>> edgesB = adj.get(b);
-			Node<Edge<T>> currB = edgesB.head;
-			Node<Edge<T>> prevB = null;
-			
-			while (currB != null) {
-				if (currB.getData().getNeighbor().equals(a)) {
-					if (prevB == null) {
-						edgesB.head = currB.getNext();
-						if (edgesB.head == null) edgesB.tail = null;
-					} else {
-						prevB.setNext(currB.getNext());
-						if (currB.getNext() == null) edgesB.tail = prevB;
-					}
-					break;
-				}
-				prevB = currB;
-				currB = currB.getNext();
-			}
-		}
-	}
-	
-	//DFS 
-	public void DFS(T src) {
-			Set<T> visited = new HashSet<>();
-			Stack<T> stack = new Stack<>();
-			stack.push(src);
-		
-			System.out.print("DFS traversal: ");
-		
-			while (!stack.isEmpty()) {
-				T current = stack.pop();
-				if (!visited.contains(current)) {
-					System.out.print(current + " ");
-					visited.add(current);
-		
-					MyLinearList<Edge<T>> neighbors = adj.get(current);
-					if (neighbors != null) {
-						List<T> neighborList = new ArrayList<>();
-						Node<Edge<T>> currNode = neighbors.head;
-						while (currNode != null) {
-							neighborList.add(currNode.getData().getNeighbor());
-							currNode = currNode.getNext();
-						}
-						Collections.reverse(neighborList);
-						for (T neighbor : neighborList) {
-							if (!visited.contains(neighbor)) {
-								stack.push(neighbor);
-							}
-						}
-					}
-				}
-			System.out.println();
-		}		
-	}
-
-	//BFS
-	public void BFS(T src) { 
-			Set<T> visited = new HashSet<>();
-			Queue<T> queue = new LinkedList<>();
-			queue.offer(src);
-			visited.add(src);
-		
-			System.out.print("BFS traversal: ");
-		
-			while (!queue.isEmpty()) {
-				T current = queue.poll();
-				System.out.print(current + " ");
-
-				MyLinearList<Edge<T>> neighbors = adj.get(current);
-				if (neighbors != null) {
-					Node<Edge<T>> currNode = neighbors.head;
-					while (currNode != null) {
-						T neighbor = currNode.getData().getNeighbor();
-						if (!visited.contains(neighbor)) {
-							visited.add(neighbor);
-							queue.offer(neighbor);
-						}
-						currNode = currNode.getNext();
-					}
-				}
-			System.out.println();
-		}
-	}
-
-public int shortestPath(T src, T dest) {
-    // Nyimpen queue ke setiap vertex
-    Map<T, Integer> distance = new HashMap<>();
-
-    // Queue
-    Queue<T> queue = new LinkedList<>();
-
-    // Mulai semua vertex dan edgenya itu tak hingga (belum pernah dikunjungi)
-    for (T key : adj.keySet()) {
-        distance.put(key, Integer.MAX_VALUE);
+    public Graph(boolean isDirected) {
+        this.isDirected = isDirected;
     }
 
-    // Masukkan vertex asal kequeuenya terus set edgenya ke 0
-    queue.offer(src);
-    distance.put(src, 0);
+    private class Vertex {
+        T data;
+        List<Edge> edges = new ArrayList<>();
 
-    while (!queue.isEmpty()) {
-        T current = queue.poll(); // Ambil vertex dari queue
-        int currentDist = distance.get(current); // Ambil jarak dari vertex tersebut
+        Vertex(T data) {
+            this.data = data;
+        }
 
-        // Ambil semua tetangga dari simpul saat ini
-        MyLinearList<Edge<T>> neighbors = adj.get(current);
-        if (neighbors != null) {
-            Node<Edge<T>> currNode = neighbors.head;
-
-            // Loop ke semua neighbour
-            while (currNode != null) {
-                T neighbor = currNode.getData().getNeighbor();
-                
-				// Kalo neighbour belom dikunjungin
-                if (distance.get(neighbor) == Integer.MAX_VALUE) {
-                    
-					// Update edge terus tambahin ke queue
-                    distance.put(neighbor, currentDist + 1);
-                    queue.offer(neighbor);
-                }
-
-                // Lanjut keneighbour berikutnya
-                currNode = currNode.getNext();
-            }
+        @Override
+        public String toString() {
+            return data.toString();
         }
     }
 
-    // Kembalikan edge dari src ke dest
-    return distance.get(dest);
-}
+    private class Edge {
+        Vertex src;
+        Vertex dest;
+        int weight;
+
+        Edge(Vertex src, Vertex dest, int weight) {
+            this.src = src;
+            this.dest = dest;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + src + "," + dest + "," + weight + ")";
+        }
+    }
+
+    public void addEdge(T from, T to, int weight) {
+        Vertex v1 = getOrCreateVertex(from);
+        Vertex v2 = getOrCreateVertex(to);
+
+        v1.edges.add(new Edge(v1, v2, weight));
+        if (!isDirected) {
+            v2.edges.add(new Edge(v2, v1, weight));
+        }
+    }
+
+    private Vertex getOrCreateVertex(T data) {
+        for (Vertex v : vertices) {
+            if (v.data.equals(data)) return v;
+        }
+        Vertex newVertex = new Vertex(data);
+        vertices.add(newVertex);
+        return newVertex;
+    }
+
+    public void printGraph() {
+        for (Vertex v : vertices) {
+            System.out.print(v + " : ");
+            for (Edge e : v.edges) {
+                System.out.print("(" + e.dest + "," + e.weight + ") ");
+            }
+            System.out.println();
+        }
+    }
+
+    public List<String> primMST(T startData) {
+        List<String> result = new ArrayList<>();
+        Set<Vertex> visited = new HashSet<>();
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingInt(e -> e.weight));
+
+        Vertex start = getOrCreateVertex(startData);
+        visited.add(start);
+        pq.addAll(start.edges);
+        int totalWeight = 0;
+
+        while (!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            if (visited.contains(edge.dest)) continue;
+
+            visited.add(edge.dest);
+            result.add(edge.toString());
+            totalWeight += edge.weight;
+            for (Edge next : edge.dest.edges) {
+                if (!visited.contains(next.dest)) {
+                    pq.add(next);
+                }
+            }
+        }
+
+        System.out.println("MST dengan Algoritma Prim:");
+        System.out.println(result);
+        System.out.println("MST Length = " + totalWeight);
+        return result;
+    }
+
+    public List<String> kruskalMST() {
+        List<String> result = new ArrayList<>();
+        Map<Vertex, Vertex> parent = new HashMap<>();
+        for (Vertex v : vertices) parent.put(v, v);
+
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingInt(e -> e.weight));
+
+        Set<String> seen = new HashSet<>(); // untuk undirected graph, hindari duplikat edge
+        for (Vertex v : vertices) {
+            for (Edge e : v.edges) {
+                String edgeKey = e.src + "-" + e.dest;
+                String reverseKey = e.dest + "-" + e.src;
+                if (!seen.contains(edgeKey) && !seen.contains(reverseKey)) {
+                    pq.add(e);
+                    seen.add(edgeKey);
+                }
+            }
+        }
+
+        int totalWeight = 0;
+        while (!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            Vertex root1 = find(parent, edge.src);
+            Vertex root2 = find(parent, edge.dest);
+
+            if (!root1.equals(root2)) {
+                result.add(edge.toString());
+                totalWeight += edge.weight;
+                parent.put(root1, root2);
+            }
+        }
+
+        System.out.println("MST dengan Algoritma Kruskal:");
+        System.out.println(result);
+        System.out.println("MST Length = " + totalWeight);
+        return result;
+    }
+
+    private Vertex find(Map<Vertex, Vertex> parent, Vertex v) {
+        if (parent.get(v) != v)
+            parent.put(v, find(parent, parent.get(v)));
+        return parent.get(v);
+    }
 }
